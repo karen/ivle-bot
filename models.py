@@ -1,6 +1,5 @@
+import os
 import peewee
-
-db = peewee.PostgresqlDatabase('ivle_bot_test', user='postgres')
 
 class IBModel(peewee.Model):
     class Meta:
@@ -25,4 +24,13 @@ def setup_database():
     except peewee.OperationalError as e:
         print(e)
 
+if __name__ == '__main__':
+    if 'HEROKU' in os.environ:
+        import urlparse
+        urlparse.uses_netloc.append('postgres')
+        url = urlparse.urlparse(os.environ["DATABASE_URL"])
+        db = PostgresqlDatabase(database=url.path[1:], user=url.username, password=url.password, host=url.hostname, port=url.port)
+    else:
+        db = peewee.PostgresqlDatabase('ivle_bot_test', user='postgres')
+    setup_database()
         
