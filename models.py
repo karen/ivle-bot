@@ -9,13 +9,6 @@ if __name__ == '__main__':
         db = peewee.PostgresqlDatabase(database=url.path[1:], user=url.username, password=url.password, host=url.hostname, port=url.port)
     else:
         db = peewee.PostgresqlDatabase('ivle_bot_test', user='postgres')
-    def setup_database():
-        db.connect()
-        try:
-            db.create_tables([User, Module])
-        except peewee.OperationalError as e:
-            print(e)
-    setup_database()
 
 class IBModel(peewee.Model):
     class Meta:
@@ -33,7 +26,13 @@ class Module(IBModel):
     class Meta:
         primary_key = peewee.CompositeKey('module_code', 'acad_year', 'semester')
 
+def setup_database():
+    db.connect()
+    try:
+        db.create_tables([User, Module])
+    except peewee.OperationalError as e:
+        print(e)
 
-
-
+if __name__ == '__main__':
+    setup_database()
         
