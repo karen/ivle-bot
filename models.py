@@ -1,14 +1,13 @@
 import os
 import peewee
 
-if __name__ == '__main__':
-    if 'HEROKU' in os.environ:
-        import urllib.parse
-        urllib.parse.uses_netloc.append('postgres')
-        url = urllib.parse.urlparse(os.environ["DATABASE_URL"])
-        db = peewee.PostgresqlDatabase(database=url.path[1:], user=url.username, password=url.password, host=url.hostname, port=url.port)
-    else:
-        db = peewee.PostgresqlDatabase('ivle_bot_test', user='postgres')
+if 'HEROKU' in os.environ:
+    import urllib.parse
+    urllib.parse.uses_netloc.append('postgres')
+    url = urllib.parse.urlparse(os.environ["DATABASE_URL"])
+    db = peewee.PostgresqlDatabase(database=url.path[1:], user=url.username, password=url.password, host=url.hostname, port=url.port)
+else:
+    db = peewee.PostgresqlDatabase('ivle_bot_test', user='postgres')
 
 class IBModel(peewee.Model):
     class Meta:
