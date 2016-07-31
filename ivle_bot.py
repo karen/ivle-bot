@@ -37,10 +37,11 @@ class IVLEBot(telepot.async.Bot):
         if command[0] != '/' and not user.auth_token:
             await self.sendMessage(chat_id,
                 'Please authenticate by logging in to IVLE and sending me your token. [/help]')
-        
         if command == '/help':
             await self.sendMessage(chat_id,
                 'To get started, please get a token by logging in to IVLE: /login and send it to me: /setup <token>.')
+            await self.sendMessage(chat_id,
+                'Available commands:\n/login\n/setup\n/nextclass\n/classestomorrow\n/announcements\n/gradebook\n/timetable\n/examtime')
         elif command == '/login':
             login_params = {'api_key': helper.API_KEY, 'chat_id': chat_id}
             markup = InlineKeyboardMarkup(inline_keyboard=[
