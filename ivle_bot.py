@@ -32,7 +32,6 @@ class IVLEBot(telepot.async.Bot):
         content = msg['text'].split()
         command = content[0]
         params = content[1:]
-        print('{} # {} # {}'.format(content, command, params))
 
         if command[0] != '/' and not user.auth_token:
             await self.sendMessage(chat_id,
