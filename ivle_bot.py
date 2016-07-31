@@ -22,7 +22,8 @@ class IVLEBot(telepot.async.Bot):
         try:
             user = User.get(user_id=chat_id)
         except User.DoesNotExist:
-            user = User(user_id=chat_id)
+            user = User.create(user_id=chat_id, auth_token='')
+        user.save()
 
         # text only for now
         if content_type != 'text':
