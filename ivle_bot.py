@@ -156,16 +156,16 @@ class IVLEBot(telepot.async.Bot):
             else:
                 await self.sendMessage(chat_id,
                     'Usage: /announcements for unread announcements, /announcements <module> <x> to retrieve the x most recent announcements')
-        elif command == 'classestomorrow':
+        elif command == '/classestomorrow':
             if params:
                 await self.sendMessage(chat_id, 'Usage: /classestomorrow')
             else:
-                result, _ = await helperdo(user.auth_token, helper.get_classes_tomorrow)
+                result, _ = await helper.do(user.auth_token, helper.get_classes_tomorrow)
                 await self.sendMessage(chat_id, result)
-        elif command == 'credits':
+        elif command == '/credits':
             await self.sendMessage(chat_id,
-                'IVLE API: https://goo.gl/zav5bb\nIVLE API Wrapper: https://github.com/benjaminheng/pyivle\nMade because I was lazy and why not?')
-        elif command == 'disclaimer':
+                'IVLE API: https://goo.gl/zav5bb\nIVLE API Wrapper: https://github.com/benjaminheng/pyivle\nTelepot: https://github.com/nickoala/telepot\n\nMade because I was lazy and why not? 🌝')
+        elif command == '/disclaimer':
             DISCLAIMER = 'THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.'
             await self.sendMessage(chat_id, DISCLAIMER)
         else:
