@@ -164,9 +164,9 @@ class IVLEBot(telepot.async.Bot):
                 await self.sendMessage(chat_id, result)
         elif command == '/credits':
             await self.sendMessage(chat_id,
-                'IVLE API: https://goo.gl/zav5bb\nIVLE API Wrapper: https://github.com/benjaminheng/pyivle\nTelepot: https://github.com/nickoala/telepot\n\nMade because I was lazy and why not? 🌝')
+                'Ingredients: IVLE API, Pyivle, Telepot.\n\nMade because I was lazy and why not? 🌝')
         elif command == '/disclaimer':
-            DISCLAIMER = 'THIS SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.'.title()
+            DISCLAIMER = 'THIS SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. '.lower().capitalize() + 'IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.'.lower().capitalize()
             await self.sendMessage(chat_id, DISCLAIMER)
         else:
             p = random.random()
