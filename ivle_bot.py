@@ -40,7 +40,7 @@ class IVLEBot(telepot.async.Bot):
             await self.sendMessage(chat_id,
                 'To get started, please get a token by logging in to IVLE: /login and send it to me: /setup <token>.')
             await self.sendMessage(chat_id,
-                'Available commands:\n/login\n/setup\n/nextclass\n/classestomorrow\n/announcements\n/gradebook\n/timetable\n/examtime')
+                'Available commands:\n/login\n/setup\n/nextclass\n/classestomorrow\n/announcements\n/gradebook\n/timetable\n/examtime\n\n/credits\n/disclaimer')
         elif command == '/login':
             login_params = {'api_key': helper.API_KEY, 'chat_id': chat_id}
             markup = InlineKeyboardMarkup(inline_keyboard=[
@@ -118,7 +118,7 @@ class IVLEBot(telepot.async.Bot):
                 await self.sendMessage(chat_id, result)
         elif command == '/examtime':
             if not params:
-                await self.sendMessage(chat_id, 'Usage: /examwhen? <module1> <module2> ...')
+                await self.sendMessage(chat_id, 'Usage: /examtime <module1> <module2> ...')
             else:
                 modules = params
                 await self.sendMessage(chat_id,
@@ -166,7 +166,7 @@ class IVLEBot(telepot.async.Bot):
             await self.sendMessage(chat_id,
                 'IVLE API: https://goo.gl/zav5bb\nIVLE API Wrapper: https://github.com/benjaminheng/pyivle\nTelepot: https://github.com/nickoala/telepot\n\nMade because I was lazy and why not? 🌝')
         elif command == '/disclaimer':
-            DISCLAIMER = 'THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.'
+            DISCLAIMER = 'THIS SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.'.title()
             await self.sendMessage(chat_id, DISCLAIMER)
         else:
             p = random.random()
