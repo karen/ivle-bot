@@ -19,8 +19,6 @@ class IVLEBot(telepot.async.Bot):
     async def on_chat_message(self, msg):
         content_type, chat_type, chat_id = telepot.glance(msg)
         user_first_name = msg['from']['first_name']
-        print('Chat:', content_type, chat_type, chat_id)
-        print(msg)
         try:
             user = User.get(user_id=chat_id)
         except User.DoesNotExist:
@@ -34,24 +32,26 @@ class IVLEBot(telepot.async.Bot):
         content = msg['text'].split()
         command = content[0]
         params = content[1:]
+        print('{} # {} # {}'.format(content, command, params))
 
         if command[0] != '/' and not user.auth_token:
-            await self.sendMessage(chat_id, 'Remember to authenticate by logging in to IVLE and sending me your token.')
+            await self.sendMessage(chat_id,
+                'Please authenticate by logging in to IVLE and sending me your token. [/help]')
         
         if command == '/help':
-            await self.sendMessage(chat_id, 'Well, hello there. You must be lost. I am IVLEBot.')
-            await self.sendMessage(chat_id, 'To get started, you need to log in to IVLE.')
-            await self.sendMessage(chat_id, 'You will receive a token which I require. Please send it to me using /setup <token>.')
-            await self.sendMessage(chat_id, 'If you are unsure of a command, simply enter it and I will tell you more about it\'s usage')
+            await self.sendMessage(chat_id,
+                'To get started, please get a token by logging in to IVLE: /login and send it to me: /setup <token>.')
         elif command == '/login':
             login_params = {'api_key': helper.API_KEY, 'chat_id': chat_id}
             markup = InlineKeyboardMarkup(inline_keyboard=[
-                         [dict(text='Login to IVLE', url='https://ivle.nus.edu.sg/api/login/?apikey={api_key}'.format(**login_params))]])
+                         [dict(text='Login to IVLE',
+                            url='https://ivle.nus.edu.sg/api/login/?apikey={api_key}'.format(**login_params))]])
             message = 'Hi {}! To get started, log in to IVLE with the link below.'.format(user_first_name)
 
-            self._message_with_inline_keyboard = await self.sendMessage(chat_id, message, reply_markup=markup)
-            await self.sendMessage(chat_id, 'When you are successfully redirected, copy the really long token (e.g. "FEAF9E5...") and run /setup FEAF9E5...')
-            await self.sendMessage(chat_id, 'By the way, do not share this token with friends, family, or pets.')
+            self._message_with_inline_keyboard = await self.sendMessage(chat_id,
+                                                    message, reply_markup=markup)
+            await self.sendMessage(chat_id,
+                'When you are successfully redirected, copy the generated token and run /setup <token>.')
         elif command == '/setup':
             if not params:
                 await self.sendMessage(chat_id, 'Usage: /setup <token>')
@@ -59,75 +59,115 @@ class IVLEBot(telepot.async.Bot):
                 token = params[0]
                 success = False
                 if user is not None:
-                    # validate
-                    u_result, success = await helper.do(token, helper.setup_user, {'user': chat_id, 'auth_token': token})
-                    await self.sendMessage(chat_id, u_result)
-
-                # validation succeeded
+                    u_result, success = await helper.do(token, helper.setup_user,
+                        {'user': user, 'auth_token': token})
                 if success:
                     await self.sendMessage(chat_id, 'I\'ll set up your modules now...')
                     m_result, success = await helper.do(token, helper.setup_modules, {'user': chat_id})       
                     await self.sendMessage(chat_id, m_result)
+                else:
+                    await self.sendMessage(chat_id,
+                        'I\'m sorry, something went wrong setting up your token. :c')
         elif command == '/gradebook':
             if not params or len(params) > 1:
-                await self.sendMessage(chat_id, 'Usage: /gradebook <module>')
+                await self.sendMessage(chat_id,
+                    'Usage: /gradebook <module>')
             else:
                 module_code = params[0]
-                await self.sendMessage(chat_id, 'Hold on, I\'m checking your grades for {}...'.format(module_code))
-
+                await self.sendMessage(chat_id,
+                    'Hold on, I\'m checking your grades for {}...'.format(module_code))
                 try:
-                    module_id = Module.select(Module.module_id).where(Module.module_code== module_code).order_by(Module.acad_year.desc(), Module.semester.desc()).get().module_id
+                    module_id = Module.select(Module.module_id). \
+                    where(Module.module_code.contains(module_code)). \
+                    order_by(Module.acad_year.desc(), Module.semester.desc()). \
+                    get().module_id
                 except Module.DoesNotExist:
                     module_id = None
 
                 if module_id is not None:
-                    result, _ = await helper.do(user.auth_token, helper.get_gradebook, {'module_code': module_code, 'module_id': module_id})
+                    result, _ = await helper.do(user.auth_token, helper.get_gradebook, {
+                        'module_code': module_code, 'module_id': module_id})
                 else:
-                    result = 'Hmm, have you executed the /setup command? (You must also be taking the module {}.)'.format(module_code)
+                    result = 'Hmm, have you executed the /setup command? (You must also be taking the module {}. 😶)'.format(module_code)
                 await self.sendMessage(chat_id, result)
         elif command == '/timetable':
             if not params:
-                await self.sendMessage(chat_id, 'Usage: /timetable <module1> [, <module2>, ...]')
+                await self.sendMessage(chat_id,
+                    'Usage: /timetable <module1> <module2> ...')
             else:
                 modules = params
-                await self.sendMessage(chat_id, 'Hold on, I\'m checking your timetable for {}...'.format(', '.join(map(lambda m: str(m), modules))))
+                await self.sendMessage(chat_id,
+                    'Hold on, I\'m checking your timetable for {}...'.format(
+                        ', '.join(map(lambda m: str(m), modules))))
 
                 try:
                     module_ids = []
-                    for code in modules:
-                        module_ids.append(module_id = Module.select(Module.module_id).where(Module.module_code== module_code).order_by(Module.acad_year.desc(), Module.semester.desc()).get().module_id)
+                    for module_code in modules:
+                        module_id = Module.select(Module.module_id). \
+                        where(Module.module_code.contains(module_code)). \
+                        order_by(Module.acad_year.desc(), Module.semester.desc()). \
+                        get().module_id
+                        module_ids.append(module_id)
                 except:
-                    module_ids = None
-
-                if module_ids is not None:
-                    result, _ = await helper.do(user.auth_token, helper.get_timetable, {'modules': module_ids})
+                    module_ids = []
+                if module_ids:
+                    result, _ = await helper.do(user.auth_token,
+                        helper.get_timetable, {'modules': module_ids})
                 else:
-                    result = 'Hmm, have you executed the /setup command? (Please also check that you have spelled each module code correctly.'
+                    result = 'Sorry, something went wrong retrieving your timetable. 🙁'
                 await self.sendMessage(chat_id, result)
         elif command == '/examtime':
             if not params:
-                await self.sendMessage(chat_id, 'Usage: /examwhen? <module1> [, <module2>, ...]')
+                await self.sendMessage(chat_id, 'Usage: /examwhen? <module1> <module2> ...')
             else:
                 modules = params
-                await self.sendMessage(chat_id, 'Hold on, I\'m checking the exam timetable for {}...'.format(', '.join(map(lambda m: str(m), modules))))
+                await self.sendMessage(chat_id,
+                    'Hold on, I\'m checking the exam timetable for {}...'.format(
+                        ', '.join(map(lambda m: str(m), modules))))
                 try:
                     module_ids = []
-                    for code in modules:
-                        module_ids.append(module_id = Module.select(Module.module_id).where(Module.module_code== module_code).order_by(Module.acad_year.desc(), Module.semester.desc()).get().module_id)
+                    for module_code in modules:
+                        module_ids.append(Module.select(Module.module_id). \
+                            where(Module.module_code.contains(module_code)). \
+                            order_by(Module.acad_year.desc(), Module.semester.desc()). \
+                            get().module_id)
                 except:
-                    module_ids = None
+                    module_ids = []
 
-                if module_ids is not None:
+                if module_ids:
                     result, _ = await helper.do(user.auth_token, helper.get_exam_timetable, {'modules': module_ids})
                 else:
-                    result = 'Hmm, have you executed the /setup command? (Please also check that you have spelled each module code correctly.'
+                    result = 'Hmm, have you executed the /setup command? (Please also check that you have spelled each module code correctly.)'
                 await self.sendMessage(chat_id, result) 
         elif command == '/nextclass':
             if params:
                 await self.sendMessage(chat_id, 'Usage: /nextclass')
             else:
-                result, _ = await helper.do(user.auth_token, helper.get_next_class, {'user': user.user_id})
+                result, _ = await helper.do(user.auth_token, helper.get_next_class)
                 await self.sendMessage(chat_id, result)
+        elif command == '/announcements':
+            if len(params) == 2:
+                result, _ = await helper.do(user.auth_token, helper.get_recent_ann, {
+                    'module_code': params[0], 'count': int(params[1])})
+                await self.sendMessage(chat_id, result)
+            elif not params:
+                result, _ = await helper.do(user.auth_token, helper.get_unread_ann)
+                await self.sendMessage(chat_id, result)
+            else:
+                await self.sendMessage(chat_id,
+                    'Usage: /announcements for unread announcements, /announcements <module> <x> to retrieve the x most recent announcements')
+        elif command == 'classestomorrow':
+            if params:
+                await self.sendMessage(chat_id, 'Usage: /classestomorrow')
+            else:
+                result, _ = await helperdo(user.auth_token, helper.get_classes_tomorrow)
+                await self.sendMessage(chat_id, result)
+        elif command == 'credits':
+            await self.sendMessage(chat_id,
+                'IVLE API: https://goo.gl/zav5bb\nIVLE API Wrapper: https://github.com/benjaminheng/pyivle\nMade because I was lazy and why not?')
+        elif command == 'disclaimer':
+            DISCLAIMER = 'THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.'
+            await self.sendMessage(chat_id, DISCLAIMER)
         else:
             p = random.random()
             message1 = 'Be content with what you have; rejoice in the way things are. When you realize there is nothing lacking, the whole world belongs to you.'
