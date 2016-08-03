@@ -152,8 +152,13 @@ class IVLEBot(telepot.async.Bot):
                     'module_code': params[0], 'count': int(params[1])})
                 await self.sendMessage(chat_id, result)
             elif not params:
-                result, _ = await helper.do(user.auth_token, helper.get_unread_ann)
-                await self.sendMessage(chat_id, result)
+                results, _ = await helper.do(user.auth_token, helper.get_unread_ann)
+                if type(results) == str:
+                    await self.sendMessage(chat_id, results)
+                else:
+                    for k, v in results.items():
+                        await self.sendMessage(chat_id, "You\'ve not read these announcements from {}:\n".format(k))
+                        await self.sendMessage(chat_id, v)
             else:
                 await self.sendMessage(chat_id,
                     'Usage: /announcements for unread announcements, /announcements <module> <x> to retrieve the x most recent announcements')
