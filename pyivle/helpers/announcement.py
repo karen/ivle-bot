@@ -14,7 +14,7 @@ class Announcement():
     # Announcement.Announcements_AddLog_JSON
     def announcements_add_log(self, annEventId, auth=True):
         params = {'AnnEventID': annEventId}
-        return api.call('Announcements_AddLog_JSON', params, auth, 'post')
+        return api.call('Announcement_AddLog_JSON', params, auth, 'post')
 
     # Announcement.Announcements_Add_JSON
     def announcements_add(self, courseId, annTitle, annMessage, sendEmail, auth=True):
