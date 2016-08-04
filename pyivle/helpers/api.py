@@ -22,9 +22,9 @@ def call(method, params, auth=False, verb='get'):
     params = process_params(params, auth)
     if verb.lower() == 'post':
         url = baseUrl + method
-        paramsEncoded = urllib.parse.urlencode(params)
+        paramsEncoded = urllib.parse.urlencode(params).encode('utf-8')
         req = urllib.request.Request(url, paramsEncoded)
-        jsonString = urllib.request.urlopen(req).read()
+        jsonString = urllib.request.urlopen(req).read().decode('utf-8')
     else:
         url = '%s?%s' % (baseUrl + method, urllib.parse.urlencode(params))
         response = urllib.request.urlopen(url)
@@ -81,7 +81,7 @@ def add_auth(params):
 # Converts params to strings. Add auth params if specified.
 def process_params(params, auth=False):
     # remove None values and convert values to Strings
-    params = dict((k, str(v)) for  k, v in params.items() if v)
+    params = dict((k, str(v)) for  k, v in list(params.items()) if v)
     if auth: 
         params = add_auth(params)
     return params
