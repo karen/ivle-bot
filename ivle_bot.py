@@ -113,7 +113,7 @@ class IVLEBot(telepot.async.Bot):
                     result, _ = await helper.do(user.auth_token,
                         helper.get_timetable, {'modules': module_ids})
                 else:
-                    result = 'Sorry, something went wrong retrieving your timetable. 🙁'
+                    result = userstr.module_ids_not_found
                 await self.sendMessage(chat_id, result)
         elif command == '/examtime':
             if not params:
@@ -136,7 +136,7 @@ class IVLEBot(telepot.async.Bot):
                 if module_ids:
                     result, _ = await helper.do(user.auth_token, helper.get_exam_timetable, {'modules': module_ids})
                 else:
-                    result = 'Hmm, have you executed the /setup command? (Please also check that you have spelled each module code correctly.)'
+                    result = userstr.module_ids_not_found
                 await self.sendMessage(chat_id, result) 
         elif command == '/nextclass':
             if params:
@@ -167,16 +167,12 @@ class IVLEBot(telepot.async.Bot):
                 result, _ = await helper.do(user.auth_token, helper.get_classes_tomorrow)
                 await self.sendMessage(chat_id, result)
         elif command == '/credits':
-            await self.sendMessage(chat_id,
-                'Ingredients: IVLE API, Pyivle, Telepot.\n\nMade because I was lazy and why not? 🌝')
+            await self.sendMessage(chat_id, userstr.credits)
         elif command == '/disclaimer':
-            DISCLAIMER = 'THIS SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. '.lower().capitalize() + 'IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.'.lower().capitalize()
-            await self.sendMessage(chat_id, DISCLAIMER)
+            await self.sendMessage(chat_id, userstr.disclaimer)
         else:
             p = random.random()
-            message1 = 'Be content with what you have; rejoice in the way things are. When you realize there is nothing lacking, the whole world belongs to you.'
-            message2 = 'Nature does not hurry, yet everything is accomplished.'
-            message = message1 if p > 0.5 else message2
+            message = userstr.fortune1 if p > 0.5 else userstr.fortune2
             await self.sendMessage(chat_id, message)
 
 TOKEN = os.environ['BOT_TOKEN']  # get token from BOT_TOKEN variable
