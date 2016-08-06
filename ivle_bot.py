@@ -7,8 +7,8 @@ from telepot.namedtuple import ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboar
 from telepot.namedtuple import InlineKeyboardMarkup, InlineKeyboardButton
 from telepot.namedtuple import InlineQueryResultArticle, InlineQueryResultPhoto, InputTextMessageContent
 import ivle_bot_helper as helper
-import models
 from models import User, Module
+import userstr
 
 class IVLEBot(telepot.async.Bot):
     def __init__(self, *args, **kwargs):
@@ -36,12 +36,12 @@ class IVLEBot(telepot.async.Bot):
 
         if command[0] != '/' and not user.auth_token:
             await self.sendMessage(chat_id,
-                'Please authenticate by logging in to IVLE and sending me your token. [/help]')
+                userstr.authenticate)
         if command == '/help':
             await self.sendMessage(chat_id,
-                'To get started, please get a token by logging in to IVLE: /login and send it to me: /setup <token>.')
+                userstr.help)
             await self.sendMessage(chat_id,
-                'Available commands:\n/login\n/setup\n/nextclass\n/classestomorrow\n/announcements\n/gradebook\n/timetable\n/examtime\n\n/credits\n/disclaimer')
+                userstr.helpcmd)
         elif command == '/login':
             login_params = {'api_key': helper.API_KEY, 'chat_id': chat_id}
             markup = InlineKeyboardMarkup(inline_keyboard=[
