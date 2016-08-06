@@ -59,16 +59,14 @@ class IVLEBot(telepot.async.Bot):
             else:
                 token = params[0]
                 success = False
-                if user is not None:
-                    u_result, success = await helper.do(token, helper.setup_user,
+                u_result, success = await helper.do(token, helper.setup_user,
                         {'user': user, 'auth_token': token})
-                if success:
-                    await self.sendMessage(chat_id, 'I\'ll set up your modules now...')
-                    m_result, success = await helper.do(token, helper.setup_modules, {'user': chat_id})       
-                    await self.sendMessage(chat_id, m_result)
-                else:
-                    await self.sendMessage(chat_id,
-                        'I\'m sorry, something went wrong setting up your token. :c')
+                await self.sendMessage(chat_id, u_result)
+                if not success:
+                    return
+                await self.sendMessage(chat_id, userstr.setup_true)
+                m_result, success = await helper.do(token, helper.setup_modules)
+                await self.sendMessage(chat_id, m_result)
         elif command == '/gradebook':
             if not params or len(params) > 1:
                 await self.sendMessage(chat_id,
