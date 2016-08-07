@@ -164,6 +164,7 @@ class IVLEBot(telepot.async.Bot):
             if params:
                 await self.sendMessage(chat_id, 'Usage: /classestomorrow')
             else:
+                await self.sendMessage(chat_id, userstr.classes_tomorrow_wait)
                 result, _ = await helper.do(user.auth_token, helper.get_classes_tomorrow)
                 await self.sendMessage(chat_id, result)
         elif command == '/credits':

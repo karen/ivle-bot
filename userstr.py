@@ -28,6 +28,7 @@ exam_timetable_false='I\'m sorry, an error occurred while retrieving the exam ti
 
 nextclass_false='I\'m sorry, an error occurred while computing your next class'
 
+classes_tomorrow_wait='Checking if you have a free day tomorrow...'
 classes_tomorrow_none='You have no classes tomorrow. Sleep in!'
 
 unread_ann_none='There are no unread announcements.'
