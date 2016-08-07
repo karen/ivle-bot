@@ -26,14 +26,17 @@ timetable_none='No classes yet! Go party! http://gph.is/11pY1qn'
 module_no_exams='There are no exams for the modules specified. Yay!'
 exam_timetable_false='I\'m sorry, an error occurred while retrieving the exam timetable'
 
+nextclass_wait='On it! Computing your next class...'
 nextclass_false='I\'m sorry, an error occurred while computing your next class'
 
 classes_tomorrow_wait='Checking if you have a free day tomorrow...'
 classes_tomorrow_describe='These are your classes tomorrow:\n'
 classes_tomorrow_none='You have no classes tomorrow. Sleep in!'
 
+unread_ann_wait='Let me check if there are any unread announcements...'
 unread_ann_none='There are no unread announcements.'
 unread_ann_false='I\'m sorry, an error occurred retrieving your unread announcements'
+recent_ann_wait='Gotcha, let me get the recent announcements for {}...'
 recent_ann_false='I\'m sorry, an error occurred retrieving all recent announcements'
 
 # The small stuff

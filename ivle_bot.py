@@ -142,14 +142,17 @@ class IVLEBot(telepot.async.Bot):
             if params:
                 await self.sendMessage(chat_id, 'Usage: /nextclass')
             else:
+                await self.sendMessage(chat_id, userstr.nextclass_wait)
                 result, _ = await helper.do(user.auth_token, helper.get_next_class)
                 await self.sendMessage(chat_id, result)
         elif command == '/announcements':
             if len(params) == 2:
+                await self.sendMessage(chat_id, userstr.recent_ann_wait.format(params[0]))
                 result, _ = await helper.do(user.auth_token, helper.get_recent_ann, {
                     'module_code': params[0], 'count': int(params[1])})
                 await self.sendMessage(chat_id, result)
             elif not params:
+                await self.sendMessage(chat_id, userstr.unread_ann_wait)
                 results, _ = await helper.do(user.auth_token, helper.get_unread_ann)
                 if type(results) == str:
                     await self.sendMessage(chat_id, results)
