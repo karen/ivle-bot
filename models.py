@@ -19,7 +19,7 @@ class User(IBModel):
 
 class Module(IBModel):
     module_id = peewee.TextField()
-    module_code = peewee.CharField(max_length=16)
+    module_code = peewee.CharField(max_length=64)
     acad_year = peewee.CharField(max_length=16)
     semester = peewee.IntegerField()
     class Meta:
