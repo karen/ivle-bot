@@ -140,10 +140,13 @@ def strf_exam_timetable(module_timetable):
 def get_next_class():
     try:
         simplified_lessons, result = _sort_lessons(_get_all_lessons())
-        idx = _get_next_class(simplified_lessons)
-        if idx is not None:
-            lesson = result[idx]
-            success = 'Your next class is: ' + strf_lesson(lesson)
+        classesIdx = _get_next_classes(simplified_lessons)
+        if not classesIdx:
+            lessons = map(strf_lesson, map(lambda idx: result[idx], classesIdx))
+            if len(lessons) == 1:
+                success = 'Your next class is: ' + lessons[0]
+            else:
+                success = 'Your next classes are: ' + '\n'.join(lessons)
             return (success, True)
         return (userstr.nextclass_false, False)
     except Exception as e:
@@ -171,15 +174,25 @@ def _sort_lessons(all_lessons):
         result.append(all_lessons[l[2]])
     return (lessons, result)
 
-def _get_next_class(lesson_triplets):
+def _get_next_classes(lesson_triplets):
+    candidateClassesIdx = []
+    day_next_class = None
+    time_next_class = None
     for i in range(len(lesson_triplets)):
         today = datetime.date.today().isoweekday()
         time_now = datetime.datetime.now().strftime('%H%M')
         lesson = lesson_triplets[i]
         day, time = lesson[0], lesson[1]
         if (day == today and int(time) >= int(time_now)) or (day > today):
-            return i
-    return None
+            if not candidateClassesIdx:
+                candidateClassesIdx.append(i)
+                day_next_class = day
+                time_next_class = time
+            elif day == day_next_class and time == time_next_class:
+                candidateClassesIdx.append(i)
+            else:
+                break
+    return candidateClassesIdx
 
 def strf_lesson(lesson):
     result = []
