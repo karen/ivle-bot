@@ -176,8 +176,8 @@ def _sort_lessons(all_lessons):
 
 def _get_next_classes(lesson_triplets):
     candidateClassesIdx = []
-    day_next_class = None
-    time_next_class = None
+    next_class_day = None
+    next_class_time = None
     for i in range(len(lesson_triplets)):
         today = datetime.date.today().isoweekday()
         time_now = datetime.datetime.now().strftime('%H%M')
@@ -186,9 +186,9 @@ def _get_next_classes(lesson_triplets):
         if (day == today and int(time) >= int(time_now)) or (day > today):
             if not candidateClassesIdx:
                 candidateClassesIdx.append(i)
-                day_next_class = day
-                time_next_class = time
-            elif day == day_next_class and time == time_next_class:
+                next_class_day = day
+                next_class_time = time
+            elif day == next_class_day and time == next_class_time:
                 candidateClassesIdx.append(i)
             else:
                 break
