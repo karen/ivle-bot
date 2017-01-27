@@ -141,8 +141,8 @@ def get_next_class():
     try:
         simplified_lessons, result = _sort_lessons(_get_all_lessons())
         classesIdx = _get_next_classes(simplified_lessons)
-        if not classesIdx:
-            lessons = map(strf_lesson, map(lambda idx: result[idx], classesIdx))
+        if classesIdx:
+            lessons = list(map(strf_lesson, map(lambda idx: result[idx], classesIdx)))
             if len(lessons) == 1:
                 success = 'Your next class is: ' + lessons[0]
             else:
